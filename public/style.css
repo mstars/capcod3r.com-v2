@@ -113,7 +113,6 @@ h2.section-title {
   text-align: center;
   letter-spacing: 0.05em;
   position: relative;
-  padding-top: .3%;
 }
 h2.section-title::after {
   content: "";
