@@ -12,19 +12,20 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Audiowide&display=swap" rel="stylesheet">
+
   <link rel="stylesheet" href="style.css">
 </head>
 <body class="audiowide-regular">
-
+  <canvas id="particles" class="fixed inset-0 -z-10"></canvas>
   <!-- Navbar -->
   <nav class="fixed w-full">
     <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
       <a href="#home" class="text-2xl font-bold tracking-wide hover:text-teal-400">Linto Thomas</a>
       <ul class="hidden md:flex space-x-10 font-semibold text-sm">
-        <li><a href="#about" class="block hover:text-teal-400 transition">About</a></li>
-        <li><a href="#timeline" class="block hover:text-teal-400 transition">Timeline</a></li>
-        <li><a href="#skills" class="block hover:text-teal-400 transition">Skills</a></li>
-        <li><a href="#projects" class="block hover:text-teal-400 transition">Projects</a></li>
+        <li><a href="#about" class="transition duration-300 hover:scale-110 hover:text-teal-400 animate-pulse">About</a></li>
+        <li><a href="#timeline" class="transition duration-300 hover:scale-110 hover:text-teal-400 animate-pulse">Timeline</a></li>
+        <li><a href="#skills" class="transition duration-300 hover:scale-110 hover:text-teal-400 animate-pulse">Skills</a></li>
+        <li><a href="#projects" class="transition duration-300 hover:scale-110 hover:text-teal-400 animate-pulse">Projects</a></li>
       </ul>
       <button id="menu-btn" class="md:hidden focus:outline-none" aria-label="Toggle menu">
         <svg class="w-7 h-7" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" 
@@ -88,17 +89,15 @@
     </a>
   </div>
   <!-- Hero Section -->
-  <section id="home" class="text-center py-20 px-4 bg-navy text-white">
-    <div class="max-w-4xl mx-auto">
-      <h1 class="text-4xl sm:text-5xl md:text-6xl font-bold mb-4 audiowide-regular">
-        Linto Thomas
-      </h1>
-      <p class="lead text-lg sm:text-xl md:text-2xl font-medium text-gray-300">
-        Senior Backend Engineer &bull; NodeJS Microservices &bull; Ethereum Smart Contracts &bull;
-        Docker &amp; CI/CD Pipelines &bull; Cybersecurity Focused
-      </p>
-    </div>
+  <section id="home" class="relative flex flex-col items-center justify-center min-h-screen px-4 text-center">
+    <h1 class="text-4xl md:text-6xl font-futuristic font-bold text-white">
+      <span id="typing-text" class="border-r-2 border-teal-400 animate-blink whitespace-nowrap">Linto Thomas</span>
+    </h1>
+    <p class="lead mt-4 max-w-xl mx-auto text-gray-300 text-base md:text-lg">
+      Senior Backend Engineer • NodeJS & Micro-services • Ethereum Smart Contracts • Docker & CI/CD • Security-Focused
+    </p>
   </section>
+  
   
 
     <!-- About Section -->
@@ -331,6 +330,56 @@
         mobileMenu.classList.add('hidden');
       });
     });
-  </script>
+
+  // Particle background
+  const canvas = document.getElementById('particles');
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  let particlesArray = [];
+  const numberOfParticles = 100;
+
+  for (let i = 0; i < numberOfParticles; i++) {
+    particlesArray.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      size: Math.random() * 2 + 1,
+      speedX: Math.random() * 1 - 0.5,
+      speedY: Math.random() * 1 - 0.5,
+    });
+  }
+
+  function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    particlesArray.forEach(p => {
+      p.x += p.speedX;
+      p.y += p.speedY;
+      if (p.x < 0 || p.x > canvas.width) p.speedX *= -1;
+      if (p.y < 0 || p.y > canvas.height) p.speedY *= -1;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(0,255,255,0.7)';
+      ctx.fill();
+    });
+    requestAnimationFrame(animate);
+  }
+  animate();
+
+  // Typing animation
+  const text = "Linto Thomas";
+  let i = 0;
+  const typingEl = document.getElementById("typing-text");
+
+  function type() {
+    if (i < text.length) {
+      typingEl.textContent = text.substring(0, i + 1);
+      i++;
+      setTimeout(type, 120);
+    }
+  }
+  type();
+</script>
+
 </body>
 </html>
