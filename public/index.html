@@ -90,11 +90,17 @@
   </div>
   <!-- Hero Section -->
   <section id="home" class="relative flex flex-col items-center justify-center min-h-screen px-4 text-center">
-    <h1 class="text-4xl md:text-6xl font-futuristic font-bold text-white">
-      <span id="typing-text" class="border-r-2 border-teal-400 animate-blink whitespace-nowrap">Linto Thomas</span>
+    <!-- Particle Canvas -->
+    <canvas id="particles" class="fixed inset-0 -z-10"></canvas>
+  
+    <!-- Typing Effect -->
+    <h1 class="text-4xl md:text-6xl font-futuristic font-extrabold text-white drop-shadow-glow">
+      Linto Thomas
     </h1>
-    <p class="lead mt-4 max-w-xl mx-auto text-gray-300 text-base md:text-lg">
-      Senior Backend Engineer • NodeJS & Micro-services • Ethereum Smart Contracts • Docker & CI/CD • Security-Focused
+  
+    <!-- Subtitle -->
+    <p class="mt-4 max-w-xl mx-auto text-cyan-100 text-base md:text-lg font-light backdrop-blur-sm">
+      <span id="typing-text" class="whitespace-nowrap border-r-2 border-cyan-400 animate-cursor"></span>
     </p>
   </section>
   
@@ -174,7 +180,7 @@
           <h3 class="text-xl font-semibold mb-2 border-b border-teal-500 pb-1">🎓 Academics</h3>
     
           <div class="mb-6">
-            <h4 class="text-lg font-semibold text-teal-400">MCA - Mar Athanasius College for Advanced Studies, Thiravalla</h4>
+            <h4 class="text-lg font-semibold text-teal-400">MCA - Mar Athanasius College for Advanced Studies, Thiruvalla</h4>
             <p class="italic text-sm">2016 - 2018</p>
             <p class="mt-2 text-sm text-gray-300">
               Active in college volleyball team. Member of the Computer Society of India. 
@@ -316,70 +322,101 @@
 
 
   <script>
-    // Mobile menu toggle
+    // === Mobile Menu Toggle ===
     const menuBtn = document.getElementById('menu-btn');
     const mobileMenu = document.getElementById('mobile-menu');
-
-    menuBtn.addEventListener('click', () => {
-      mobileMenu.classList.toggle('hidden');
-    });
-
-    // Close mobile menu on link click
-    mobileMenu.querySelectorAll('a').forEach(link => {
-      link.addEventListener('click', () => {
-        mobileMenu.classList.add('hidden');
+  
+    if (menuBtn && mobileMenu) {
+      menuBtn.addEventListener('click', () => {
+        mobileMenu.classList.toggle('hidden');
       });
-    });
-
-  // Particle background
-  const canvas = document.getElementById('particles');
-  const ctx = canvas.getContext('2d');
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-
-  let particlesArray = [];
-  const numberOfParticles = 100;
-
-  for (let i = 0; i < numberOfParticles; i++) {
-    particlesArray.push({
-      x: Math.random() * canvas.width,
-      y: Math.random() * canvas.height,
-      size: Math.random() * 2 + 1,
-      speedX: Math.random() * 1 - 0.5,
-      speedY: Math.random() * 1 - 0.5,
-    });
-  }
-
-  function animate() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    particlesArray.forEach(p => {
-      p.x += p.speedX;
-      p.y += p.speedY;
-      if (p.x < 0 || p.x > canvas.width) p.speedX *= -1;
-      if (p.y < 0 || p.y > canvas.height) p.speedY *= -1;
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-      ctx.fillStyle = 'rgba(0,255,255,0.7)';
-      ctx.fill();
-    });
-    requestAnimationFrame(animate);
-  }
-  animate();
-
-  // Typing animation
-  const text = "Linto Thomas";
-  let i = 0;
-  const typingEl = document.getElementById("typing-text");
-
-  function type() {
-    if (i < text.length) {
-      typingEl.textContent = text.substring(0, i + 1);
-      i++;
-      setTimeout(type, 120);
+  
+      mobileMenu.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => {
+          mobileMenu.classList.add('hidden');
+        });
+      });
     }
-  }
-  type();
-</script>
+  
+    // === Particle Background ===
+    const canvas = document.getElementById('particles');
+    const ctx = canvas.getContext('2d');
+  
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+  
+    let particles = [];
+    const totalParticles = 150;
+  
+    for (let i = 0; i < totalParticles; i++) {
+      particles.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        size: Math.random() * 2 + 1,
+        vx: (Math.random() - 0.5) * 1.5,
+        vy: (Math.random() - 0.5) * 1.5,
+        color: `hsl(${Math.random() * 360}, 100%, 70%)`
+      });
+    }
+  
+    function drawParticles() {
+      ctx.fillStyle = "#0a192f";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+  
+      particles.forEach(p => {
+        p.x += p.vx;
+        p.y += p.vy;
+  
+        if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+        if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+  
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fillStyle = p.color;
+        ctx.shadowColor = p.color;
+        ctx.shadowBlur = 10;
+        ctx.fill();
+      });
+  
+      requestAnimationFrame(drawParticles);
+    }
+    drawParticles();
+  
+    // === Typing Text Loop ===
+    const phrases = ["Senior Backend Engineer", "Backend Specialist", "Blockchain Developer", "Security Enthusiast"];
+    const typingEl = document.getElementById("typing-text");
+  
+    let phraseIndex = 0;
+    let charIndex = 0;
+    let isDeleting = false;
+  
+    function typeLoop() {
+      const currentPhrase = phrases[phraseIndex];
+      const displayText = currentPhrase.substring(0, charIndex);
+      typingEl.textContent = displayText;
+  
+      if (!isDeleting && charIndex < currentPhrase.length) {
+        charIndex++;
+        setTimeout(typeLoop, 100);
+      } else if (isDeleting && charIndex > 0) {
+        charIndex--;
+        setTimeout(typeLoop, 50);
+      } else {
+        isDeleting = !isDeleting;
+        if (!isDeleting) {
+          phraseIndex = (phraseIndex + 1) % phrases.length;
+        }
+        setTimeout(typeLoop, 1000);
+      }
+    }
+  
+    if (typingEl) typeLoop();
+  </script>
+  
 
 </body>
 </html>
